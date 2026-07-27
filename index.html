@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>My Gallery</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#090909;
+color:white;
+min-height:100vh;
+}
+
+.login{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+gap:20px;
+}
+
+.login h1{
+font-size:35px;
+color:#ff4d6d;
+}
+
+input{
+width:300px;
+padding:15px;
+border:none;
+border-radius:12px;
+font-size:18px;
+outline:none;
+text-align:center;
+}
+
+button{
+padding:15px 40px;
+font-size:18px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:#ff4d6d;
+color:white;
+transition:.3s;
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+#app{
+display:none;
+padding:20px;
+}
+
+.top{
+display:flex;
+justify-content:center;
+gap:15px;
+margin-bottom:25px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:15px;
+}
+
+.card{
+background:#1a1a1a;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 0 15px rgba(255,0,80,.3);
+}
+
+.card img{
+width:100%;
+display:block;
+}
+
+.card video{
+width:100%;
+display:block;
+}
+
+.title{
+text-align:center;
+font-size:28px;
+margin-bottom:20px;
+color:#ff4d6d;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="login" id="login">
+
+<h1>🔒 My Gallery</h1>
+
+<input
+type="password"
+id="pass"
+placeholder="Enter Password">
+
+<button onclick="login()">
+Open Gallery
+</button>
+
+</div>
+
+<div id="app">
+
+<h2 class="title">
+My Private Gallery ❤️
+</h2>
+
+<div class="top">
+
+<button onclick="loadPhotos()">
+📸 Photos
+</button>
+
+<button onclick="loadVideos()">
+🎥 Videos
+</button>
+
+</div>
+
+<div id="gallery" class="grid"></div>
+
+</div>
+
+<script>
+
+const PASSWORD="282010";
+
+const SUPABASE_URL="https://xtsvuqndmubnfjddwjbh.supabase.co";
+
+const SUPABASE_KEY="আপনার Publishable Key এখানে বসবে";
+
+const BUCKET="My-Galiry";
+
+const photos=[
+"photo1.jpg",
+"photo2.jpg"
+];
+
+const videos=[
+"video1.mp4",
+"video2.mp4"
+];function login(){
+
+const pass=document.getElementById("pass").value;
+
+if(pass===PASSWORD){
+
+document.getElementById("login").style.display="none";
+document.getElementById("app").style.display="block";
+
+loadPhotos();
+
+}else{
+
+alert("Wrong Password!");
+
+}
+
+}
+
+function photoURL(name){
+
+return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/Photo/${name}`;
+
+}
+
+function videoURL(name){
+
+return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/Video/${name}`;
+
+}
+
+function loadPhotos(){
+
+const gallery=document.getElementById("gallery");
+
+gallery.innerHTML="";
+
+photos.forEach(file=>{
+
+gallery.innerHTML+=`
+
+<div class="card">
+
+<img src="${photoURL(file)}" loading="lazy">
+
+</div>
+
+`;
+
+});
+
+}
+
+function loadVideos(){
+
+const gallery=document.getElementById("gallery");
+
+gallery.innerHTML="";
+
+videos.forEach(file=>{
+
+gallery.innerHTML+=`
+
+<div class="card">
+
+<video controls preload="metadata">
+
+<source src="${videoURL(file)}" type="video/mp4">
+
+</video>
+
+</div>
+
+`;
+
+});
+
+  }// প্রথমবার পাসওয়ার্ড বক্সে কার্সর থাকবে
+window.onload = () => {
+  document.getElementById("pass").focus();
+};
+
+// Enter চাপলে Login হবে
+document
+  .getElementById("pass")
+  .addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      login();
+    }
+  });</script>
+
+</body>
+</html>
