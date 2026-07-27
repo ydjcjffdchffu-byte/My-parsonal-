@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>My Gallery</title>
 
@@ -16,7 +16,7 @@ font-family:Arial,sans-serif;
 
 body{
 background:#090909;
-color:white;
+color:#fff;
 min-height:100vh;
 }
 
@@ -27,6 +27,7 @@ justify-content:center;
 align-items:center;
 flex-direction:column;
 gap:20px;
+padding:20px;
 }
 
 .login h1{
@@ -35,23 +36,24 @@ color:#ff4d6d;
 }
 
 input{
-width:300px;
+width:320px;
+max-width:95%;
 padding:15px;
+font-size:18px;
 border:none;
 border-radius:12px;
-font-size:18px;
 outline:none;
 text-align:center;
 }
 
 button{
-padding:15px 40px;
-font-size:18px;
+padding:14px 35px;
 border:none;
 border-radius:12px;
+font-size:18px;
 cursor:pointer;
 background:#ff4d6d;
-color:white;
+color:#fff;
 transition:.3s;
 }
 
@@ -64,10 +66,18 @@ display:none;
 padding:20px;
 }
 
+.title{
+text-align:center;
+font-size:30px;
+margin-bottom:20px;
+color:#ff4d6d;
+}
+
 .top{
 display:flex;
 justify-content:center;
 gap:15px;
+flex-wrap:wrap;
 margin-bottom:25px;
 }
 
@@ -78,30 +88,18 @@ gap:15px;
 }
 
 .card{
-background:#1a1a1a;
+background:#1b1b1b;
 border-radius:15px;
 overflow:hidden;
-box-shadow:0 0 15px rgba(255,0,80,.3);
+box-shadow:0 0 15px rgba(255,0,100,.25);
 }
 
-.card img{
-width:100%;
-display:block;
-}
-
+.card img,
 .card video{
 width:100%;
 display:block;
 }
-
-.title{
-text-align:center;
-font-size:28px;
-margin-bottom:20px;
-color:#ff4d6d;
-}
 </style>
-
 </head>
 
 <body>
@@ -129,29 +127,19 @@ My Private Gallery ❤️
 
 <div class="top">
 
-<button onclick="loadPhotos()">
-📸 Photos
-</button>
+<button onclick="loadPhotos()">📸 Photos</button>
 
-<button onclick="loadVideos()">
-🎥 Videos
-</button>
+<button onclick="loadVideos()">🎥 Videos</button>
 
 </div>
 
 <div id="gallery" class="grid"></div>
 
-</div>
+  </div><script>
+const PASSWORD = "282010";
 
-<script>
-
-const PASSWORD="282010";
-
-const SUPABASE_URL="https://xtsvuqndmubnfjddwjbh.supabase.co";
-
-const SUPABASE_KEY="sb_publishable_cd_5v330rdTxh3lae3NBWQ_0R7br0Ba";
-
-const BUCKET="galliry";
+const SUPABASE_URL = "https://xtsvuqndmubnfjddwjbh.supabase.co";
+const BUCKET = "gallery";
 
 const photos = [
   "GLTRSCLczawRiQRipxEwaOwGc0A.jpg",
@@ -160,99 +148,72 @@ const photos = [
   "file_0000000052ac820b91a033599e024879.png"
 ];
 
-const videos=[
-"video1.mp4",
-"video2.mp4"
-];function login(){
+const videos = [
+  "video1.mp4",
+  "video2.mp4"
+];
 
-const pass=document.getElementById("pass").value;
+function login() {
+  const pass = document.getElementById("pass").value;
 
-if(pass===PASSWORD){
-
-document.getElementById("login").style.display="none";
-document.getElementById("app").style.display="block";
-
-loadPhotos();
-
-}else{
-
-alert("Wrong Password!");
-
+  if (pass === PASSWORD) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    loadPhotos();
+  } else {
+    alert("Wrong Password!");
+  }
 }
 
+function photoURL(name) {
+  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/Photo/${encodeURIComponent(name)}`;
 }
 
-function photoURL(name){
-
-return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/Photo/${name}`;
-
+function videoURL(name) {
+  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/Video/${encodeURIComponent(name)}`;
 }
 
-function videoURL(name){
+function loadPhotos() {
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
 
-return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/Video/${name}`;
-
+  photos.forEach(file => {
+    gallery.innerHTML += `
+      <div class="card">
+        <img src="${photoURL(file)}"
+             alt="${file}"
+             loading="lazy"
+             onerror="this.style.display='none'">
+      </div>
+    `;
+  });
 }
 
-function loadPhotos(){
+function loadVideos() {
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
 
-const gallery=document.getElementById("gallery");
-
-gallery.innerHTML="";
-
-photos.forEach(file=>{
-
-gallery.innerHTML+=`
-
-<div class="card">
-
-<img src="${photoURL(file)}" loading="lazy">
-
-</div>
-
-`;
-
-});
-
+  videos.forEach(file => {
+    gallery.innerHTML += `
+      <div class="card">
+        <video controls preload="metadata">
+          <source src="${videoURL(file)}" type="video/mp4">
+        </video>
+      </div>
+    `;
+  });
 }
 
-function loadVideos(){
-
-const gallery=document.getElementById("gallery");
-
-gallery.innerHTML="";
-
-videos.forEach(file=>{
-
-gallery.innerHTML+=`
-
-<div class="card">
-
-<video controls preload="metadata">
-
-<source src="${videoURL(file)}" type="video/mp4">
-
-</video>
-
-</div>
-
-`;
-
-});
-
-  }// প্রথমবার পাসওয়ার্ড বক্সে কার্সর থাকবে
 window.onload = () => {
   document.getElementById("pass").focus();
 };
 
-// Enter চাপলে Login হবে
-document
-  .getElementById("pass")
-  .addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      login();
-    }
-  });</script>
+document.getElementById("pass").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    login();
+  }
+});
+</script>
 
 </body>
 </html>
